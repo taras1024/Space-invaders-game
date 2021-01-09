@@ -16,12 +16,13 @@ document.addEventListener("DOMContentLoaded", ()=> {
         30,31,32,33,34,35,36,37,38,39
     ];
 
-    //draw the aliens invaders
+    //=======draw the aliens invaders========
     alienInvaders.forEach(invader => squares[currentInvaderIndex + invader].classList.add('invader'));
-    //draw the shooter
+
+    //=======draw the shooter================
     squares[currentShooterIndex].classList.add('shooter');
 
-    //move shooter along a line
+    //==========move shooter along the line=========
     function moveShooter (e) {
         squares[currentShooterIndex].classList.remove('shooter');
         switch (e.keyCode) {
@@ -35,33 +36,39 @@ document.addEventListener("DOMContentLoaded", ()=> {
         squares[currentShooterIndex].classList.add('shooter');
     }
 
+
+    //==============moveShooter listener=================
     document.addEventListener('keydown', moveShooter);
 
-    //move the alien invaders
+
+    //=============move the alien invaders===============
     function moveInvaders() {
         const leftEdge = alienInvaders[0] % width === 0;
         const rightEdge = alienInvaders[alienInvaders.length - 1] % width === width - 1;
 
-
+        //=====decide next direction for aliens invaders=======
         if ((leftEdge && direction === -1) || (rightEdge && direction === 1)) {
             direction = width;
         } else if (direction === width) {
             if (leftEdge) direction = 1;
             else  direction = -1;
         }
+        //=====remove invaders from previous position===========
         for (let i = 0; i <= alienInvaders.length - 1; i++) {
             squares[alienInvaders[i]].classList.remove('invader');
         }
+        //===========change invaders position due to direction======
         for (let i = 0; i <= alienInvaders.length - 1; i++) {
             alienInvaders[i] += direction;
         }
+        //============show current invaders===========
         for (let i = 0; i <= alienInvaders.length - 1; i++) {
             if (!alienInvadersTakenDown.includes(i)) {
                 squares[alienInvaders[i]].classList.add('invader');
             }
         }
 
-        //decide a game over
+        //==========decide a game over=============
         if (squares[currentShooterIndex].classList.contains('invader', 'shooter')) {
             resultDisplay.textContent = "Game Over";
             squares[currentShooterIndex].classList.add('boom');
@@ -75,17 +82,17 @@ document.addEventListener("DOMContentLoaded", ()=> {
             }
         }
 
-        //decide a win
+        //==========decide a win===========
         if (alienInvadersTakenDown.length === alienInvaders.length) {
             resultDisplay.textContent = "You Win!";
             clearInterval(invaderId);
         }
-    }
+    }//moveInvaders
 
     invaderId = setInterval(moveInvaders, 500);
     
     
-    //shoot at aliens function 
+    //=======shoot at aliens function========
     function shoot(e) {
         let laserId;
         let currentLaserIndex = currentShooterIndex;
@@ -99,9 +106,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
                 squares[currentLaserIndex].classList.remove('laser');
                 squares[currentLaserIndex].classList.remove('invader');
                 squares[currentLaserIndex].classList.add('boom');
-                setTimeout(() => squares[currentLaserIndex].classList.remove         ('boom'), 250);
+                setTimeout(() => squares[currentLaserIndex].classList.remove                        ('boom'), 250);
                 clearInterval(laserId);
 
+                //==============add to alien takedown array killed invader using         currentlaser index
                 const alienTakeDown = alienInvaders.indexOf(currentLaserIndex);
                 alienInvadersTakenDown.push(alienTakeDown);
                 result++;
@@ -114,11 +122,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
             }
         }
 
-        // document.addEventListener('keyup', e => {
-        //    if(e.keyCode === 32) {
-        //        laserId = setInterval(moveLaser, 100);
-        //    }
-        // });
+        //========define "space" - shoot button and run laser function
         switch (e.keyCode) {
             case 32:
                 laserId = setInterval(moveLaser, 100);
@@ -126,8 +130,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
         }
     }
 
+    //===========listener for keyboard actions===========
     document.addEventListener('keyup', shoot);
-
 
 
 })
